@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"regexp"
 	// "log"
 	"net/http"
 	"strconv"
+	"regexp"
 	"reflect"
 
 	// "tradewindsnew/api/fileupload"

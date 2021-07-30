@@ -121,12 +121,12 @@ func (p *EmailTemplate) FindTemplateByClientID(db *gorm.DB,clientid string) (*[]
 
 func (p *EmailTemplate) FindTemplateByClientIDTemplateTitle(db *gorm.DB,clientid string,title string) (*[]EmailTemplate, error) {
 	var err error
-	lookups := []EmailTemplate{}
+	templates := []EmailTemplate{}
 	
-	err = db.Debug().Model(&EmailTemplate{}).Where("client_id = ?", clientid).Where("template_title = ?", title).Find(&lookups).Error
+	err = db.Debug().Model(&EmailTemplate{}).Where("client_id = ?", clientid).Where("template_title = ?", title).Find(&templates).Error
 	if err != nil {
 		return &[]EmailTemplate{}, err
 	}
 
-	return &lookups, nil
+	return &templates, nil
 }

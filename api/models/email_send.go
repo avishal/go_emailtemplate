@@ -5,7 +5,7 @@ import (
 	// "context"
 	"fmt"
 	"time"
-
+	// "github.com/go-sql-driver/mysql"
 	// "go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/mongo/options"
 	// "go.mongodb.org/mongo-driver/bson"
@@ -22,8 +22,8 @@ import (
 type EmailSend struct {
 	Id            uint32    `gorm:"primary_key;auto_increment" json:"id"`
 	Client_id     string    `gorm:"size:255;not null;" json:"client_id"`
-	Template_id   string    `gorm:"size:255;not null;" json:"template_id"`
-	Is_sent       string    `gorm:"size:255;" json:"is_sent"`
+	Template_id   uint32    `gorm:"size:255;not null;" json:"template_id"`
+	Is_sent       uint32    `json:"is_sent"`
 	Status        string    `gorm:"size:255;not null;" json:"status"`
 	Sent_datetime time.Time `sql:"default:null" json:"sent_datetime"`
 	Send_from     string    `gorm:"size:255;not null;" json:"send_from"`
@@ -31,8 +31,8 @@ type EmailSend struct {
 	Cc            string    `gorm:"size:255;not null;" json:"cc"`
 	Subject       string    `gorm:"size:255;not null;" json:"subject"`
 	Body          string    `gorm:"size:255;not null;" json:"body"`
-	Receiver_type bool      `gorm:"size:10;not null;" sql:"default:0" json:"receiver_type"`
-	Receiver_id   string    `gorm:"size:25;not null;" sql:"default:no" json:"receiver_id"`
+	Receiver_type string      `gorm:"size:10;not null;" sql:"default:0" json:"receiver_type"`
+	Receiver_id   uint32    `gorm:"size:25;not null;" sql:"default:no" json:"receiver_id"`
 	Error_message string    `gorm:"size:25;null;" sql:"default:no" json:"error_message"`
 	Created_dt    time.Time `sql:"default:CURRENT_TIMESTAMP" json:"created_dt"`
 }
