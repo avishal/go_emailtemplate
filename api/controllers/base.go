@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"email-template/api/middlewares"
-	"email-template/api/models"
+	// "email-template/api/models"
 
 	"github.com/gin-gonic/gin"
 	// "github.com/jinzhu/gorm"
@@ -74,15 +74,15 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 	}*/
 
 	// server.DB.DropTableIfExists(&models.Audit{})
-	server.DB.Migrator().DropTable(&models.EmailTemplate{})
-	server.DB.Migrator().DropTable(&models.EmailSend{})
+	// server.DB.Migrator().DropTable(&models.EmailTemplate{})
+	// server.DB.Migrator().DropTable(&models.EmailSend{})
 	// server.DB.Migrator().DropTable(&models.Customer{})
 	// server.DB.Migrator().DropTable(&models.Audit{})
 	// server.DB.Migrator().DropTable(&models.User{})
 	//database migration
-	message := server.DB.Migrator().CreateTable(&models.EmailTemplate{})
-	message = server.DB.Migrator().CreateTable(&models.EmailSend{})
-	fmt.Println(message)
+	// message := server.DB.Migrator().CreateTable(&models.EmailTemplate{})
+	// message = server.DB.Migrator().CreateTable(&models.EmailSend{})
+	// fmt.Println(message)
 	// message = server.DB.Migrator().CreateTable(&models.Customer{})
 	// message = server.DB.Migrator().CreateTable(&models.Content{})
 	// message = server.DB.Migrator().CreateTable(&models.Lookup{})

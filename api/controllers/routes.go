@@ -28,7 +28,18 @@ func (s *Server) initializeRoutes() {
 		v1.POST("/email_template/create", s.CreateEmailTemplate)
 		v1.POST("/email_template/update/:id", s.UpdateEmailTemplate)
 		v1.POST("/email_template/delete/:id", s.DeleteEmailTemplate)
+
 		v1.POST("/send_email", s.CreateEmail)
+		v1.GET("/get_email/:field/:value", s.GetEmail)
+		v1.GET("/get_email_by_id_type/:id/:receiver_type", s.GetEmailByIdType)
+		v1.GET("/get_all_emails", s.GetAllEmail)
+		v1.POST("/update_email/:id", s.UpdateEmail)
+		v1.POST("/delete_email/:id", s.DeleteEmail)
+
+		// v1.POST("/get_email/client/:client_id", s.CreateEmail)
+		// v1.POST("/get_email/receiver/:receiver_id", s.CreateEmail)
+		// v1.POST("/get_email/:receiver_type", s.CreateEmail)
+		// v1.POST("/get_email/status/:status", s.CreateEmail)
 		//Customers routes
 		// swagger:route POST /api/v1/customers CreateCustomers
 		// v1.POST("/create_customer/", s.CreateCustomer)

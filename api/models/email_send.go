@@ -57,7 +57,7 @@ func (u *EmailSend) Prepare() {
 func (u *EmailSend) FindAllEmails(db *gorm.DB) (*[]EmailSend, error) {
 	var err error
 	ets := []EmailSend{}
-	err = db.Debug().Model(&EmailSend{}).Limit(100).Find(&ets).Error
+	err = db.Debug().Model(&EmailSend{}).Find(&ets).Error
 	if err != nil {
 		return &[]EmailSend{}, err
 	}
@@ -73,4 +73,55 @@ func (u *EmailSend) SaveEmail(db *gorm.DB) (*EmailSend, error) {
 		return &EmailSend{}, err
 	}
 	return u, nil
+}
+
+func (u *EmailSend) SaveUpdateEmail(db *gorm.DB, id uint32) (*EmailSend, error) {
+
+	var err error
+	fmt.Println(u)
+	// err = db.Debug().Create(&u).Error
+	err = db.Debug().Model(&EmailSend{}).Where("id = ?", id).Updates(&u).Error
+	if err != nil {
+		return &EmailSend{}, err
+	}
+	return u, nil
+}
+
+func (u *EmailSend) FindEmailByCol(db *gorm.DB, field string, value uint32) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where(field, value).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
+
+func (u *EmailSend) FindEmailByStringCol(db *gorm.DB, field string, value string) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where(field, value).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
+
+
+func (u *EmailSend) FindEmailByIdType(db *gorm.DB, id uint32, receiver_type string) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where("receiver_id = ?", id).Where("receiver_type = ?", receiver_type).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
+
+func (u *EmailSend) DeleteEmail(db *gorm.DB, uid uint32) (int64, error) {
+	db.Debug().Model(EmailSend{}).Where("id = ?", uid).Take(&u).Delete(&EmailSend{})
+	if db.Error != nil {
+		return 0, db.Error
+	}
+	return db.RowsAffected, nil
 }
