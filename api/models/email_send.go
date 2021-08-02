@@ -125,3 +125,14 @@ func (u *EmailSend) DeleteEmail(db *gorm.DB, uid uint32) (int64, error) {
 	}
 	return db.RowsAffected, nil
 }
+
+
+func (u *EmailSend) FindAllUnsentEmails(db *gorm.DB) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where("status = ?", "new").Where("is_sent = ?", 0).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}

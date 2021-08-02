@@ -35,7 +35,10 @@ func (s *Server) initializeRoutes() {
 		v1.GET("/get_all_emails", s.GetAllEmail)
 		v1.POST("/update_email/:id", s.UpdateEmail)
 		v1.POST("/delete_email/:id", s.DeleteEmail)
-
+		
+		v1.GET("/start-scheduler", s.StartScheduler)
+		v1.GET("/stop-scheduler", s.StopScheduler)
+		v1.GET("/test-mail", s.TestMail)
 		// v1.POST("/get_email/client/:client_id", s.CreateEmail)
 		// v1.POST("/get_email/receiver/:receiver_id", s.CreateEmail)
 		// v1.POST("/get_email/:receiver_type", s.CreateEmail)

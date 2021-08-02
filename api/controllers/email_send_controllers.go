@@ -23,6 +23,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	// "time"
+	"github.com/jasonlvhit/gocron"
+	"net/smtp"
+	"text/template"
+	"bytes"
 )
 
 func (server *Server) CreateEmail(c *gin.Context) {
@@ -174,6 +178,7 @@ func (server *Server) GetEmail(c *gin.Context) {
 	if(field == "id") {
 		tempId, err := strconv.ParseUint(value, 10, 32)
 		emails, err := emailsend.FindEmailByCol(server.DB, field, uint32(tempId))
+		
 		if err != nil {
 			errList["No_emailsend"] = "No email Found"
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -461,4 +466,134 @@ func (server *Server) UpdateEmail(c *gin.Context) {
 		})
 		return
 	}*/
+}
+
+func task() {
+	fmt.Println("I am running task.")
+}
+
+
+
+func (server *Server) StartScheduler(c *gin.Context) {
+	fmt.Println("-----------------start scheduler-----------------")
+	gocron.Every(10).Seconds().Do(server.GetNewMails)
+	gocron.Start()
+}
+
+func (server *Server) StopScheduler(c *gin.Context) {
+	fmt.Println("-----------------stop scheduler-----------------")
+	gocron.Clear()
+}
+
+func (server *Server) GetNewMails() {
+	email := models.EmailSend{}
+	allEmails, err := email.FindAllUnsentEmails(server.DB)
+
+	if err != nil {
+		// c.JSON(http.StatusInternalServerError, gin.H{
+		// 	"status": http.StatusInternalServerError,
+		// 	"error":  err.Error(),
+		// })
+		// return
+		fmt.Println("mail send err");
+	}
+
+	for i:=0; i< len(*allEmails); i++ {
+		SendMail( (*allEmails)[i] );
+		(*allEmails)[i].Is_sent = 1;
+		(*allEmails)[i].Status = "email_sent";
+		_, err := (*allEmails)[i].SaveUpdateEmail(server.DB,(*allEmails)[i].Id)
+		if err != nil {
+			fmt.Println("err: update mail");
+		}
+	}
+}
+
+func SendMail(email_data models.EmailSend) {
+	fmt.Println("-----------------Sending E-Mail----------------")
+	fmt.Println(email_data.Subject);
+	// Sender data.
+	from := "a5fba4294ecf28"
+	password := "8efe5a5e14b346"
+  
+	// Receiver email address.
+	to := []string{
+		email_data.Send_to,
+	}
+  
+	// smtp server configuration.
+	smtpHost := "smtp.mailtrap.io"
+	smtpPort := "2525"
+  
+	// Authentication.
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+  
+	t, _ := template.ParseFiles("template.html")
+  
+	var body bytes.Buffer
+  
+	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body.Write([]byte(fmt.Sprintf("Subject: "+email_data.Subject+"\n%s\n\n", mimeHeaders)))
+  
+	t.Execute(&body, struct {
+	  Body string
+	}{
+	  Body: email_data.Body,
+	})
+  
+	// Sending email.
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, email_data.Send_from, to, body.Bytes())
+	// fmt.Println(body);
+	// message := "This is a test email message."
+	// err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message.Bytes())
+	if err != nil {
+	  fmt.Println(err)
+	  return
+	}
+	fmt.Println("Email Sent!")
+}
+
+func (server *Server) TestMail(c *gin.Context) {
+	fmt.Println("-----------------Test Mail----------------")
+	// Sender data.
+	from := "a5fba4294ecf28"
+	password := "8efe5a5e14b346"
+  
+	// Receiver email address.
+	to := []string{
+		"totest@test.com",
+	}
+  
+	// smtp server configuration.
+	smtpHost := "smtp.mailtrap.io"
+	smtpPort := "2525"
+  
+	// Authentication.
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+  
+	t, _ := template.ParseFiles("template.html")
+  
+	var body bytes.Buffer
+  
+	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body.Write([]byte(fmt.Sprintf("Subject: This is a test subject \n%s\n\n", mimeHeaders)))
+  
+	t.Execute(&body, struct {
+	  Name    string
+	  Message string
+	}{
+	  Name:    "Puneet Singh",
+	  Message: "This is a test message in a HTML template",
+	})
+  
+	// Sending email.
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, "testtest@test.com", to, body.Bytes())
+	// fmt.Println(body);
+	// message := "This is a test email message."
+	// err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message.Bytes())
+	if err != nil {
+	  fmt.Println(err)
+	  return
+	}
+	fmt.Println("Email Sent!")
 }
