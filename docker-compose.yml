@@ -1,0 +1,108 @@
+version: '2'
+services:
+  app:
+    container_name: emailservice
+    build: .
+      # context: .
+      # dockerfile: ./Dockerfile
+    ports: 
+      - 8890:8890 
+    restart: on-failure
+    volumes:              # without this volume mapping to the directory of our project, live reloading wont happen
+      - .:/usr/src/app
+    # depends_on:
+    #   - forum-postgres # This service depends on postgres. Start that first.
+      # - forum-mysql # This service depends on mysql. Start that first.
+    # networks:
+    #   - tradewindsnew
+    # image: nginx:1.9
+    # expose:
+    #   -"80"
+    environment:
+      APP_ENV: local
+      API_PORT: 8890
+      API_SECRET: 98hbun98h
+      DB_DRIVER: mysql
+      DB_HOST: agency-cloud-non-prod-cluster.cluster-cha1o3asnyvz.us-east-2.rds.amazonaws.com
+      DB_PORT: 3306
+      DB_NAME: tradewinds_dev
+      DB_USER: tradewinds_support_dev
+      DB_PASSWORD: synergy2021pwd
+      DB_SCHEMA: Dev
+      MONGODBURL: mongodb://wmarketplace-cosmosdb:zXTzXrpjRLyGZ8YX6qCBm8QeDOKZQIkANif8Kn3hZVRW0xWDNjTgWWMrOux6sQUhxnLPvoy9HjNYXh2wnTFrHQ==@wmarketplace-cosmosdb.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@wmarketplace-cosmosdb@
+
+
+
+
+#   forum-postgres:
+#     image: postgres:latest
+#     container_name: full_db_postgres
+#     environment:
+#       - POSTGRES_USER=${DB_USER}  
+#       - POSTGRES_PASSWORD=${DB_PASSWORD}
+#       - POSTGRES_DB=${DB_NAME}
+#       - DATABASE_HOST=${DB_HOST} 
+#     ports:
+#       - '5432:5432'
+#     volumes:
+#       - database_postgres:/var/lib/postgresql/data
+#     networks:
+#       - forum
+    
+#   pgadmin:
+#     image: dpage/pgadmin4
+#     container_name: pgadmin_container
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+#       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+#     depends_on:
+#       - forum-postgres
+#     ports:
+#       - "5050:80"
+#     networks:
+#       - forum
+#     restart: unless-stopped
+
+  
+  # forum-mysql:
+  #   image: mysql:5.7
+  #   container_name: full_db_mysql
+  #   ports: 
+  #     - 3306:3306
+  #   environment: 
+  #     - MYSQL_ROOT_HOST=${DB_HOST} 
+  #     - MYSQL_USER=${DB_USER}
+  #     - MYSQL_PASSWORD=${DB_PASSWORD}
+  #     - MYSQL_DATABASE=${DB_NAME}
+  #     - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+  #   volumes:
+  #     - database_mysql:/var/lib/mysql
+  #   networks:
+  #     - forum
+  
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: phpmyadmin_container
+  #   depends_on:
+  #     - forum-mysql
+  #   environment:
+  #     - PMA_HOST=mysql # Note the "mysql". Must be the name of the what you used as the mysql service.
+  #     - PMA_USER=${DB_USER}
+  #     - PMA_PORT=${DB_PORT}
+  #     - PMA_PASSWORD=${DB_PASSWORD}
+  #   ports:
+  #     - 9090:80
+  #   restart: always
+  #   networks:
+  #     - forum
+
+
+volumes:
+  api:
+#   database_postgres:
+  # database_mysql:
+
+# Networks to be created to facilitate communication between containers
+# networks:
+#   forum:
+#     driver: bridge
