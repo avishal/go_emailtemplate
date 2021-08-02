@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"email-template/api/middlewares"
+	"email-template/api/models"
+
 	// "email-template/api/models"
 
 	"github.com/gin-gonic/gin"
@@ -101,6 +103,8 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 		// &models.Comment{},
 		// &models.User{},
 		// &models.Audit{},
+		&models.EmailTemplate{},
+		&models.EmailSend{},
 	)
 
 	server.Router = gin.Default()
@@ -109,7 +113,6 @@ func (server *Server) Initialize(Dbdriver, DbUser, DbPassword, DbPort, DbHost, D
 	server.initializeRoutes()
 
 }
-
 
 func (server *Server) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, server.Router))
