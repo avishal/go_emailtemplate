@@ -5,6 +5,7 @@ import (
 	// "context"
 	"fmt"
 	"time"
+
 	// "github.com/go-sql-driver/mysql"
 	// "go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/mongo/options"
@@ -31,7 +32,7 @@ type EmailSend struct {
 	Cc            string    `gorm:"size:255;not null;" json:"cc"`
 	Subject       string    `gorm:"size:255;not null;" json:"subject"`
 	Body          string    `gorm:"size:255;not null;" json:"body"`
-	Receiver_type string      `gorm:"size:10;not null;" sql:"default:0" json:"receiver_type"`
+	Receiver_type string    `gorm:"size:10;not null;" sql:"default:0" json:"receiver_type"`
 	Receiver_id   uint32    `gorm:"size:25;not null;" sql:"default:no" json:"receiver_id"`
 	Error_message string    `gorm:"size:25;null;" sql:"default:no" json:"error_message"`
 	Created_dt    time.Time `sql:"default:CURRENT_TIMESTAMP" json:"created_dt"`
@@ -107,7 +108,6 @@ func (u *EmailSend) FindEmailByStringCol(db *gorm.DB, field string, value string
 	return &ets, err
 }
 
-
 func (u *EmailSend) FindEmailByIdType(db *gorm.DB, id uint32, receiver_type string) (*[]EmailSend, error) {
 	var err error
 	ets := []EmailSend{}
@@ -126,11 +126,20 @@ func (u *EmailSend) DeleteEmail(db *gorm.DB, uid uint32) (int64, error) {
 	return db.RowsAffected, nil
 }
 
-
 func (u *EmailSend) FindAllUnsentEmails(db *gorm.DB) (*[]EmailSend, error) {
 	var err error
 	ets := []EmailSend{}
 	err = db.Debug().Model(&EmailSend{}).Where("status = ?", "new").Where("is_sent = ?", 0).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
+
+func (u *EmailSend) FindAllUnsentSellerEmails(db *gorm.DB) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where("status = ?", "new").Where("is_sent = ?", 0).Where("receiver_type=?", "Seller").Find(&ets).Error
 	if err != nil {
 		return &[]EmailSend{}, err
 	}

@@ -35,7 +35,8 @@ func (s *Server) initializeRoutes() {
 		v1.GET("/get_all_emails", s.GetAllEmail)
 		v1.POST("/update_email/:id", s.UpdateEmail)
 		v1.POST("/delete_email/:id", s.DeleteEmail)
-		
+		v1.GET("/get_all_unsent_seller_mails", s.GetUnSentSellerMails)
+
 		v1.GET("/start-scheduler", s.StartScheduler)
 		v1.GET("/stop-scheduler", s.StopScheduler)
 		v1.GET("/test-mail", s.TestMail)
@@ -130,7 +131,6 @@ func (s *Server) initializeRoutes() {
 
 	}
 }
-
 
 // HealthCheck godoc
 // @Summary Show the status of server.
