@@ -40,6 +40,7 @@ func (s *Server) initializeRoutes() {
 		v1.GET("/start-scheduler", s.StartScheduler)
 		v1.GET("/stop-scheduler", s.StopScheduler)
 		v1.GET("/test-mail", s.TestMail)
+		v1.POST("/send_mail_by_admin", s.SendEmailbyAdmin)
 		// v1.POST("/get_email/client/:client_id", s.CreateEmail)
 		// v1.POST("/get_email/receiver/:receiver_id", s.CreateEmail)
 		// v1.POST("/get_email/:receiver_type", s.CreateEmail)

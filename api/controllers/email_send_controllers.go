@@ -610,3 +610,57 @@ func (server *Server) TestMail(c *gin.Context) {
 	}
 	fmt.Println("Email Sent!")
 }
+
+func (server *Server) SendEmailbyAdmin(c *gin.Context) {
+
+	//clear previous error if any
+	errList = map[string]string{}
+	//  var id_list  []uint32
+
+	body, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		errList["Invalid_body"] = "Unable to get request"
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"status": http.StatusUnprocessableEntity,
+			"error":  errList,
+		})
+		return
+	}
+	requestBody := map[string][]uint32{}
+	err = json.Unmarshal(body, &requestBody)
+	fmt.Println("id list =", requestBody)
+	id_list := requestBody["id"]
+	fmt.Println("ids =", requestBody["id"], id_list)
+	email := models.EmailSend{}
+	emails, err := email.FindAllMailsByIDS(server.DB, id_list)
+
+	for i := 0; i < len(*emails); i++ {
+		SendMail((*emails)[i])
+		(*emails)[i].Is_sent = 1
+		(*emails)[i].Status = "email_sent"
+		_, err := (*emails)[i].SaveUpdateEmail(server.DB, (*emails)[i].Id)
+		if err != nil {
+			fmt.Println("err: update mail")
+		}
+	}
+
+	// template := models.EmailSend{}
+	// id := c.Param("id")
+
+	// templId, err := strconv.ParseUint(id, 10, 32)
+	// _, err = template.DeleteEmail(server.DB, uint32(templId))
+
+	// if err != nil {
+	// 	errList["No_template"] = "No email Found"
+	// 	c.JSON(http.StatusNotFound, gin.H{
+	// 		"status": http.StatusNotFound,
+	// 		"error":  errList,
+	// 	})
+	// 	return
+	// }
+	c.JSON(http.StatusOK, gin.H{
+		"status":   http.StatusOK,
+		"response": "Emails sent",
+	})
+
+}
