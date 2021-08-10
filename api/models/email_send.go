@@ -145,3 +145,38 @@ func (u *EmailSend) FindAllUnsentSellerEmails(db *gorm.DB) (*[]EmailSend, error)
 	}
 	return &ets, err
 }
+
+func (u *EmailSend) SearchEmailsByReceiverType(db *gorm.DB, receiver_type string) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where("receiver_type = ?", receiver_type).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
+
+func (u *EmailSend) SearchEmailsByReceiverID(db *gorm.DB, receiver_id uint32) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	err = db.Debug().Model(&EmailSend{}).Where("receiver_id = ?", receiver_id).Find(&ets).Error
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
+
+func (u *EmailSend) FindAllMailsByIDS(db *gorm.DB, id_list []uint32) (*[]EmailSend, error) {
+	var err error
+	ets := []EmailSend{}
+	email := EmailSend{}
+	for i := 0; i < len(id_list); i++ {
+		err = db.Debug().Model(&EmailSend{}).Where("id = ?", id_list[i]).Find(&email).Error
+		ets = append(ets, email)
+	}
+
+	if err != nil {
+		return &[]EmailSend{}, err
+	}
+	return &ets, err
+}
